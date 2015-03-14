@@ -1,23 +1,25 @@
 package com.fangvo.myapplication2.app;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 public class MainActivity extends Activity {
@@ -32,6 +34,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         Button btn = (Button)findViewById(R.id.button);
         btn.setOnClickListener(onClickListener);
+        Button btn2 = (Button)findViewById(R.id.button2);
+        btn2.setOnClickListener(onClickListener);
         new AsyncRequest(this).execute("Select * from Goods");
     }
 
@@ -41,15 +45,32 @@ public class MainActivity extends Activity {
             switch(v.getId()){
                 case R.id.button:
 
-                    List<ClientsTable> list  = new ArrayList<ClientsTable>();
-                    list.add(new ClientsTable("name","adres",465546L,654L,"bank",789L,987L,321L,"director"));
+                    List<Map<Integer,Object>> list  = new ArrayList<Map<Integer,Object>>();
+                    Map<Integer,Object> dict = new HashMap<Integer, Object>();
+                    dict.put(1,"somename");
+                    dict.put(2,"adres");
+                    dict.put(3,465546L);
+                    dict.put(4,654L);
+                    dict.put(5,"bank");
+                    dict.put(6,789L);
+                    dict.put(7,987L);
+                    dict.put(8,321L);
+                    dict.put(9,"Покупатель");
+                    dict.put(10,"director");
+                    list.add(dict);
 
-                    new AsyncInsert(list).execute();
+                    new AsyncInsert(list).execute("INSERT into Clients values(?,?,?,?,?,?,?,?,?,?)");
+                    break;
+                case R.id.button2:
+                    List<Map<Integer,Object>> list_update  = new ArrayList<Map<Integer,Object>>();
+                    Map<Integer,Object> dict_update = new HashMap<Integer, Object>();
+                    dict_update.put(1, "somenameafterchange");
+                    dict_update.put(2, "adres");
+                    list_update.add(dict_update);
+
+                    new AsyncInsert(list_update).execute("update Clients set [Клиент] = ? where [Адрес] = ?");
                     break;
                 /*
-                case R.id.button2:
-                    //DO something
-                    break;
                 case R.id.button3:
                     //DO something
                     break;
@@ -59,6 +80,7 @@ public class MainActivity extends Activity {
     };
 
 
+    //region OptionMenu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -80,13 +102,22 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+    //endregion
+
 //25.82.46.162
-    public final class AsyncRequest extends AsyncTask<String, Void, JSONArray> {
+    public class AsyncRequest extends AsyncTask<String, Void, JSONArray> {
 
         private Context mContext;
+        private ProgressDialog dialog = new ProgressDialog(MainActivity.this);
 
         public AsyncRequest(Context context) {
             mContext = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("Loading from DB wait... Please wait...");
+            dialog.show();
         }
 
         @SuppressWarnings("ThrowFromFinallyBlock")
@@ -136,6 +167,13 @@ public class MainActivity extends Activity {
             return resultSet;
         }
 
+        protected void onCancelled() {
+            dialog.dismiss();
+            Toast toast = Toast.makeText(MainActivity.this, "Error connecting to Server", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.TOP, 25, 400);
+            toast.show();
+        }
+
         @Override
         protected void onPostExecute(JSONArray result) {
             // TODO: вернуть результат
@@ -148,29 +186,34 @@ public class MainActivity extends Activity {
                     String s ="";
                     for(int j = 0; j<rowObject.names().length(); j++){
                         s += rowObject.names().getString(j)+"\n"+rowObject.get(rowObject.names().getString(j))+"\n";
-                        Log.v("JSON RETURN", "key = " + rowObject.names().getString(j) + " value = " + rowObject.get(rowObject.names().getString(j)));
+                        //Log.v("JSON RETURN", "key = " + rowObject.names().getString(j) + " value = " + rowObject.get(rowObject.names().getString(j)));
                     }
                     myList.add(s);
 
-                }catch (JSONException e ){e.printStackTrace();}
+                }catch (JSONException e ){e.printStackTrace();dialog.dismiss();}
             }
 
 
             ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(mContext,android.R.layout.simple_list_item_1, myList);
             ListView listView = (ListView) findViewById(R.id.listView);
             listView.setAdapter(dataAdapter);
+            dialog.dismiss();
         }
     }
 
-    public final class AsyncInsert extends AsyncTask<String, Void, Void> {
+    public class AsyncInsert extends AsyncTask<String, Void, Void> {
 
-        private static final String REMOTE_TABLE = "dbo.Clients";
-        private static final String SQL = "INSERT into " + REMOTE_TABLE + " values(?,?,?,?,?,?,?,?,?,?)";
+        private List<Map<Integer,Object>> mData;
+        private ProgressDialog dialog = new ProgressDialog(MainActivity.this);
 
-        private final List<ClientsTable> mData;
-
-        public AsyncInsert(List<ClientsTable> data) {
+        public AsyncInsert(List<Map<Integer,Object>> data) {
             this.mData = data;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("Updating DB wait... Please wait...");
+            dialog.show();
         }
 
         @SuppressWarnings("ThrowFromFinallyBlock")
@@ -183,25 +226,22 @@ public class MainActivity extends Activity {
                 try {
                     con = DriverManager.getConnection(MSSQL_DB, MSSQL_LOGIN, MSSQL_PASS);
                     if (con != null) {
-                        prepared = con.prepareStatement(SQL);
+                        prepared = con.prepareStatement(proc_params[0]);
 
-                        for (ClientsTable item : mData) {
-                            prepared.setString(1, item.cname);
-                            prepared.setString(2, item.adres);
-                            prepared.setLong(3, item.inn);
-                            prepared.setLong(4, item.kpp);
-                            prepared.setString(5, item.bank);
-                            prepared.setLong(6, item.rs);
-                            prepared.setLong(7, item.ks);
-                            prepared.setLong(8, item.bik);
-                            prepared.setString(9, item.ctype);
-                            prepared.setString(10, item.dir);
+                        for (Map<Integer,Object> item : mData) {
+
+                            for (Map.Entry<Integer, Object> entry : item.entrySet())
+                            {
+                                prepared.setObject(entry.getKey(), entry.getValue());
+                                System.out.println(entry.getKey() + "/" + entry.getValue());
+                            }
                             prepared.addBatch();
                         }
                         prepared.executeUpdate();
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
+                    cancel(true);
                 } finally {
                     try {
                         if (prepared != null) prepared.close();
@@ -212,8 +252,22 @@ public class MainActivity extends Activity {
                 }
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                cancel(true);
             }
             return null;
+        }
+
+        protected void onCancelled() {
+            dialog.dismiss();
+            Toast toast = Toast.makeText(MainActivity.this, "Error connecting to Server", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.TOP, 25, 400);
+            toast.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            dialog.dismiss();
+            super.onPostExecute(aVoid);
         }
     }
 }
