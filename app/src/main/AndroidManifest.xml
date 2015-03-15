@@ -16,6 +16,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.fangvo.myapplication2.app.Tab1"
+            android:label="Tab1">
+        </activity>
+        <activity
+            android:name="com.fangvo.myapplication2.app.Tab2"
+            android:label="Tab2">
+        </activity>
+        <activity
+            android:name="com.fangvo.myapplication2.app.PriceListActivity"
+            android:label="PriceListActivity">
+        </activity>
+        <activity
+            android:name="com.fangvo.myapplication2.app.AddSellActivity"
+            android:label="AddSellActivity">
+        </activity>
+        <activity
+            android:name="com.fangvo.myapplication2.app.AddSellItemActivity"
+            android:label="AddSellActivity">
+        </activity>
     </application>
 
 </manifest>
