@@ -35,8 +35,7 @@ public class AsyncRequest extends AsyncTask<String, Void, JSONArray> {
     @Override
     protected JSONArray doInBackground(String... query) {
         JSONArray resultSet = new JSONArray();
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
+        //try {
             Connection con = null;
             Statement st = null;
             ResultSet rs = null;
@@ -71,9 +70,9 @@ public class AsyncRequest extends AsyncTask<String, Void, JSONArray> {
                     throw new RuntimeException(e.getMessage());
                 }
             }
-        } catch (ClassNotFoundException e) {
+        /*} catch (ClassNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
         //Log.i("JSON ADD",resultSet.toString());
         return resultSet;
     }

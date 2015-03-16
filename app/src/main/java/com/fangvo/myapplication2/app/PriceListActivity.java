@@ -1,13 +1,9 @@
 package com.fangvo.myapplication2.app;
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListHeader;
-import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListItemInterface;
-import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListItem;
-import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListAdapter;
+import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,26 +20,34 @@ public class PriceListActivity extends ListActivity {
         setContentView(R.layout.price_list);
 
 
-        GenerateList(this);
+        //GeneratePriceList(this);
 
-        /*
-        items.add(new Header("Header 1"));
-        items.add(new ListItem("Text 1", "Rabble rabble","text3"));
-        items.add(new ListItem("Text 2", "Rabble rabble","text3"));
-        items.add(new ListItem("Text 3", "Rabble rabble","text3"));
-        items.add(new ListItem("Text 4", "Rabble rabble","text3"));
-        items.add(new Header("Header 2"));
-        items.add(new ListItem("Text 5", "Rabble rabble","text3"));
-        items.add(new ListItem("Text 6", "Rabble rabble","text3"));
-        items.add(new ListItem("Text 7", "Rabble rabble","text3"));
-        items.add(new ListItem("Text 8", "Rabble rabble","text3"));*/
+        JSONObject result = MyData.priceList;
 
-        //PriceListAdapter adapter = new PriceListAdapter(this, items);
-        //setListAdapter(adapter);
+        List<PriceListItemInterface> items = new ArrayList<PriceListItemInterface>();
+
+
+        Iterator JSONObjectIterator = result.keys();
+        while(JSONObjectIterator.hasNext()){
+            String key = (String)JSONObjectIterator.next();
+            items.add(new PriceListHeader(key));
+            try {
+                JSONArray JArray = result.getJSONArray(key);
+                for (int i = 0; i<JArray.length();i++){
+                    JSONObject obj = JArray.getJSONObject(i);
+                    items.add(new PriceListItem(obj.getString("name"),obj.getDouble("chena"),obj.getLong("kolvo")) {
+                    });
+                }
+            }catch (JSONException e ){Log.e("JSONException", e.getMessage());}
+        }
+
+        PriceListAdapter adapter = new PriceListAdapter(this, items);
+        setListAdapter(adapter);
+
     }
 
 
-    private void GenerateList(final Context context){
+    /*private void GeneratePriceList(final Context context){
 
         AsyncResponse AS= new AsyncResponse() {
             @Override
@@ -120,5 +124,5 @@ public class PriceListActivity extends ListActivity {
 
         Log.i("CODE","Return");
 
-    }
+    }*/
 }

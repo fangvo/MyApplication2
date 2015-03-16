@@ -32,10 +32,6 @@
             android:name="com.fangvo.myapplication2.app.AddSellActivity"
             android:label="AddSellActivity">
         </activity>
-        <activity
-            android:name="com.fangvo.myapplication2.app.AddSellItemActivity"
-            android:label="AddSellActivity">
-        </activity>
     </application>
 
 </manifest>

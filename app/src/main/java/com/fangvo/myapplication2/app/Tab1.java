@@ -8,19 +8,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Spinner;
-import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListAdapter;
-import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListHeader;
-import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListItem;
-import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListItemInterface;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 public class Tab1 extends Activity {
@@ -33,6 +24,13 @@ public class Tab1 extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab1);
 
+        List<String> myList = MyData.clientsName;
+        Map<String,GoodsData> data = MyData.data;
+
+        for(String name :myList){
+            Log.i("CLIENTSNAMES", name);
+        }
+
         mContext = this;
         mSpinner = (Spinner) findViewById(R.id.spinner2);
 
@@ -41,6 +39,14 @@ public class Tab1 extends Activity {
 
         Button btn2 = (Button)findViewById(R.id.button2);
         btn2.setOnClickListener(onClickListener);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(Tab1.this, android.R.layout.simple_spinner_item, myList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        mSpinner.setAdapter(adapter);
+        mSpinner.setSelection(0);
+
+
 
     }
 
@@ -58,7 +64,7 @@ public class Tab1 extends Activity {
 
                 case R.id.button2:
                     Intent activity_add_sell = new Intent(Tab1.this,AddSellActivity.class);
-                    activity_add_sell.putExtra("client", "name");
+                    activity_add_sell.putExtra("client", (String)mSpinner.getSelectedItem());
                     startActivity(activity_add_sell);
                     break;
 /*
@@ -75,44 +81,8 @@ public class Tab1 extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        GenerateList(Tab1.this,mSpinner);
     }
 
-    private void GenerateList(final Context context,final Spinner spinner){
 
-        AsyncResponse AS= new AsyncResponse() {
-            @Override
-            public void processFinish(JSONArray output) {
-
-                Log.i("CODE","AsyncResponse");
-
-                List<String> myList = new ArrayList<String>();
-
-                for (int i = 0;i<output.length();i++   ){
-                    try {
-                        JSONObject rowObject = output.getJSONObject(i);
-                        String name = rowObject.getString("Клиент");
-                        myList.add(name);
-
-                    }catch (JSONException e ){e.printStackTrace();}
-                }
-
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, myList);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-                spinner.setAdapter(adapter);
-                spinner.setSelection(0);
-
-            }
-        };
-
-        try {
-            new AsyncRequest(this, AS).execute("Select [Клиент] from Clients");
-            Log.i("CODE","AsyncTask");
-        }catch (NullPointerException e){e.printStackTrace();}
-
-        Log.i("CODE","Return");
-
-    }
 
 }

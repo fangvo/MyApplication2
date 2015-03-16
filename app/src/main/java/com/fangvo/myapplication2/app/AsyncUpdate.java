@@ -17,7 +17,16 @@ public class AsyncUpdate extends AsyncTask<String, Void, Void> {
 
     private List<Map<Integer,Object>> mData;
     private Context mContext;
-    private ProgressDialog dialog = new ProgressDialog(mContext);
+    private ProgressDialog dialog ;
+    public AsyncResponse response;
+
+
+    public AsyncUpdate(List<Map<Integer,Object>> data,Context cont,AsyncResponse response) {
+        this.mData = data;
+        mContext = cont;
+        this.response = response;
+        System.out.println("INICIALIZATION");
+    }
 
     public AsyncUpdate(List<Map<Integer,Object>> data,Context cont) {
         this.mData = data;
@@ -26,13 +35,15 @@ public class AsyncUpdate extends AsyncTask<String, Void, Void> {
 
     @Override
     protected void onPreExecute() {
+        /*dialog = new ProgressDialog(mContext);
         dialog.setMessage("Updating DB wait... Please wait...");
-        dialog.show();
+        dialog.show();*/
     }
 
     @SuppressWarnings("ThrowFromFinallyBlock")
     @Override
     protected Void doInBackground(String... proc_params) {
+        System.out.println("doInBackground");
         try {
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
             Connection con = null;
@@ -50,8 +61,11 @@ public class AsyncUpdate extends AsyncTask<String, Void, Void> {
                             System.out.println(entry.getKey() + "/" + entry.getValue());
                         }
                         prepared.addBatch();
+                        prepared.executeUpdate();
+
+                        System.out.println("addBatch");
                     }
-                    prepared.executeUpdate();
+
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -66,13 +80,14 @@ public class AsyncUpdate extends AsyncTask<String, Void, Void> {
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            cancel(true);
         }
+
+        System.out.println("doInBackground  END");
         return null;
     }
 
     protected void onCancelled() {
-        dialog.dismiss();
+        //dialog.dismiss();
         Toast toast = Toast.makeText(mContext, "Error connecting to Server", Toast.LENGTH_LONG);
         toast.setGravity(Gravity.TOP, 25, 400);
         toast.show();
@@ -80,7 +95,10 @@ public class AsyncUpdate extends AsyncTask<String, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        dialog.dismiss();
+        if (response!=null) {
+            response.processFinish(null);
+        }
+        //dialog.dismiss();
         super.onPostExecute(aVoid);
     }
 }

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:background="#eaecee">
+    >
 
     <TabHost
         android:layout_width="fill_parent"
