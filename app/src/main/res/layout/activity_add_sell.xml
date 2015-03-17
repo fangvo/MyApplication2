@@ -4,11 +4,22 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-    <Spinner
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinner"
-        />
+        android:layout_height="wrap_content">
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner3"/>
+
+        <Spinner
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner"
+            />
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"

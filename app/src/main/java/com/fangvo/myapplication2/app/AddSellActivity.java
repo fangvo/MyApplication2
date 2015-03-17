@@ -1,19 +1,15 @@
 package com.fangvo.myapplication2.app;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListAdapter;
 import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListItem;
 import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListItemInterface;
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -24,9 +20,9 @@ public class AddSellActivity extends Activity {
     ListView mListView;
     PriceListAdapter adapter_listview;
     Spinner mSinner;
-    Map<String,GoodsData> mData;
+    Spinner mCSinner;
+    Map<String,GoodsData> mData = new HashMap<String, GoodsData>();
     EditText mEditText;
-    String mClient_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,13 +31,19 @@ public class AddSellActivity extends Activity {
 
         mItems = new ArrayList<PriceListItemInterface>();
 
+        List<String> clientList = MyData.clientsName;
+        for(String name :clientList){
+            Log.i("CLIENTSNAMES", name);
+        }
+
         mEditText = (EditText) findViewById(R.id.editText);
         mSinner =(Spinner) findViewById(R.id.spinner);
+        mCSinner =(Spinner) findViewById(R.id.spinner3);
         mListView =(ListView) findViewById(R.id.listView);
 
         ArrayList<String> myList = new ArrayList<String>();
 
-        mData = MyData.data;
+        mData.putAll(MyData.data);
 
         for (String key:mData.keySet()){
             myList.add(key);
@@ -53,8 +55,7 @@ public class AddSellActivity extends Activity {
         mSinner.setAdapter(adapter);
         mSinner.setSelection(0);
 
-        Intent intent = getIntent();
-        mClient_name = intent.getStringExtra("client");
+
         Button btn = (Button)findViewById(R.id.button4);
         btn.setOnClickListener(onClickListener);
 
@@ -66,18 +67,21 @@ public class AddSellActivity extends Activity {
 
         mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
 
+
+
         adapter_listview = new PriceListAdapter(this, mItems);
         mListView.setAdapter(adapter_listview);
 
-        /*editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    v.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                }
-            }
-        });*/
+        ArrayAdapter<String> adapter_clients = new ArrayAdapter<String>(AddSellActivity.this, android.R.layout.simple_spinner_item, clientList);
+        adapter_clients.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mCSinner.setAdapter(adapter_clients);
+        mCSinner.setSelection(0);
 
+
+    }
+
+    public void changeSpinnerState(Spinner spinner,Boolean state) {
+            spinner.setEnabled(state);
     }
 
     @Override
@@ -99,13 +103,15 @@ public class AddSellActivity extends Activity {
                     break;
                 case R.id.button6:
 
-                    Log.e("BUTTON", "button6");
+                    Log.i("BUTTON", "button6");
                     String name =(String)mSinner.getSelectedItem();
                     Long kolvo =  Long.parseLong(mEditText.getEditableText().toString());
 
                     if(kolvo < mData.get(name).kolvo){
+                        Log.i("IFCOND", "kolvo<mdata kolvo");
                         mData.get(name).kolvo -= kolvo;
-                    }else if (mData.get(name).kolvo!=0L && mData.get(name).kolvo>kolvo){
+                    }else if (mData.get(name).kolvo!=0L && mData.get(name).kolvo<=kolvo){
+                        Log.i("IFCOND", "mDatakolvo ");
                         kolvo = mData.get(name).kolvo;
                         mData.get(name).kolvo = 0L;
                     }else if (mData.get(name).kolvo == 0L){
@@ -113,11 +119,6 @@ public class AddSellActivity extends Activity {
                         return;
                     }
 
-
-/*                    if(mTempData.get(name) !=null){
-                        GoodsData tempGData = mTempData.get(name);
-                        tempGData.kolvo +=kolvo;
-                    }else{mTempData.put(name,mData.get(name));}*/
 
                     for (Object mItem : mItems) {
                         PriceListItem itItem = (PriceListItem) mItem;
@@ -130,11 +131,8 @@ public class AddSellActivity extends Activity {
                     }
 
                     mItems.add(new PriceListItem(name, mData.get(name).chena*kolvo, kolvo ) );
-
-                    /*Button btn2 = (Button)findViewById(R.id.button5);
-                    btn2.setOnClickListener(onClickListener);*/
-
                     adapter_listview.notifyDataSetChanged();
+                    //changeSpinnerState(mSinner,false);
 
 
 
@@ -146,46 +144,40 @@ public class AddSellActivity extends Activity {
 
     private void UpdateDB(){
 
-/*        AsyncResponse AS= new AsyncResponse() {
-            @Override
-            public void processFinish(JSONArray output) {
-
-                Log.i("CODE", "AsyncResponse");
-
-
-            }
-
-        };*/
-
         List<Map<Integer,Object>> list  = new ArrayList<Map<Integer,Object>>();
         List<Map<Integer,Object>> list2  = new ArrayList<Map<Integer,Object>>();
+        List<Map<Integer,Object>> list3  = new ArrayList<Map<Integer,Object>>();
+
+        SimpleDateFormat df = new SimpleDateFormat("dd.M.yyyy");
+        Date date = new Date();
+        String dateStr = df.format(date.getTime());
+        Log.i("TIME", dateStr);
 
         Integer num = 1;
-
         Double sum = 0D;
 
         for (Object item : mItems){
             Map<Integer,Object> dict = new HashMap<Integer, Object>();
+            Map<Integer,Object> dict3 = new HashMap<Integer, Object>();
             dict.put(1,num);
             dict.put(2,((PriceListItem) item).name);
             dict.put(3,((PriceListItem) item).kolvo);
             dict.put(4,MyData.ifOfNextSell);
             dict.put(5,((PriceListItem) item).chena);
             list.add(dict);
+            dict3.put(1,mData.get(((PriceListItem) item).name).kolvo);
+            dict3.put(2,dateStr);
+            dict3.put(3,((PriceListItem) item).name);
+            list3.add(dict3);
             sum += ((PriceListItem) item).chena;
             num++;
         }
 
 
-        SimpleDateFormat df = new SimpleDateFormat("dd.M.yyyy");
 
-        Date date = new Date();
-
-        String dateStr = df.format(date.getTime());
-        Log.i("TIME", dateStr);
 
         Map<Integer,Object> dict2 = new HashMap<Integer, Object>();
-        dict2.put(1,mClient_name);
+        dict2.put(1,(String)mCSinner.getSelectedItem());
         dict2.put(2,"Продажа");
         dict2.put(3,dateStr);
         dict2.put(4,sum);
@@ -196,24 +188,13 @@ public class AddSellActivity extends Activity {
 
         new AsyncUpdate(list2,getApplicationContext()).execute("INSERT into Sells values(?,?,?,?,?,?,?)");
         new AsyncUpdate(list,getApplicationContext()).execute("INSERT into SellInfo values(?,?,?,?,?)");
+        new AsyncUpdate(list3,getApplicationContext()).execute("update Goods set kolvo = ? , Last = ? where name = ? ");
+
+        MyData.data = mData;
+
         finish();
 
 
     }
 
-    /*private void setNameAsEditable (View rowView, boolean setToEditable) {
-
-        EditText textView = (EditText) rowView
-                .findViewById(R.id.editText);
-        textView.setFocusableInTouchMode(setToEditable);
-        textView.setFocusable(setToEditable);
-
-        InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(textView.getWindowToken(), 0);
-
-        if (setToEditable) {
-            textView.requestFocus();
-            imm.showSoftInput(textView, 0);
-        }
-    }*/
 }
