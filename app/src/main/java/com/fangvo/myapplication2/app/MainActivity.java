@@ -3,11 +3,15 @@ package com.fangvo.myapplication2.app;
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TabHost;
+import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,190 +32,38 @@ public class MainActivity extends TabActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        PrefsRef pr = new PrefsRef(this);
+
+
+
+
         try {
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
         }catch (ClassNotFoundException e){e.printStackTrace();}
         TabHost tabHost = getTabHost();
-                GeneratePriceList(this);
-        GetNumOfSells(this);
-        GetNameOfTraider(this);
-        GenerateList(this,tabHost);
+
+        TabHost.TabSpec tabSpec;
 
 
+        tabSpec = tabHost.newTabSpec("tag1");
+        tabSpec.setIndicator("Tab1");
+        tabSpec.setContent(new Intent(MainActivity.this, Tab1.class));
+        tabHost.addTab(tabSpec);
 
-    }
+        tabSpec = tabHost.newTabSpec("tag2");
+        tabSpec.setIndicator("Настройки");
+        tabSpec.setContent(new Intent(MainActivity.this, Tab2.class));
+        tabHost.addTab(tabSpec);
 
-
-    private void GeneratePriceList(final Context context){
-
-        AsyncResponse AS= new AsyncResponse() {
-            @Override
-            public void processFinish(JSONArray output) {
-
-                Log.i("CODE", "AsyncResponse");
-
-                JSONObject result = new JSONObject();
-
-                Map<String,GoodsData> map = new HashMap<String, GoodsData>();
-
-                for (int i = 0;i<output.length();i++   ){
-                    try {
-                        JSONObject rowObject = output.getJSONObject(i);
-                        JSONArray tempArray;
-                        JSONObject tempObject = new JSONObject();
-
-                        String temp = rowObject.getString("name");
-                        String[] separated = temp.split(" ");
-                        String proiz = separated[separated.length-1];
-                        String name ="";
-                        for (int j=0;j<separated.length-1;j++){
-                            name += separated[j]+" ";
-                        }
-                        Double chena = rowObject.getDouble("chena");
-                        Long kolvo = rowObject.getLong("kolvo");
-
-                        try {
-                            tempArray = result.getJSONArray(proiz);
-
-                        }catch (JSONException e){
-
-                            Log.v("JSONException", e.getMessage());
-                            tempArray = new JSONArray();
-                        }
-
-                        map.put(temp,new GoodsData(chena,kolvo));
-                        tempObject.put("chena",chena);
-                        tempObject.put("kolvo",kolvo);
-                        tempObject.put("name",name.trim());
-                        tempArray.put(tempObject);
-                        result.put(proiz,tempArray);
-
-                    }catch (JSONException e ){e.printStackTrace();}
-                }
-
-                MyData.priceList = result;
-                MyData.data = map;
-
-            }
-        };
-
-        try {
-            new AsyncRequest(context, AS).execute("Select name,chena,kolvo from Goods");
-            Log.i("CODE","AsyncTask");
-        }catch (NullPointerException e){e.printStackTrace();}
-
-        Log.i("CODE","Return");
+        if(pr.MSSQL_URL.equals("")||pr.MSSQL_DB.equals("")||pr.MSSQL_Login.equals("")||pr.MSSQL_Password.equals("")){
+            tabHost.setCurrentTab(1);
+        }
 
     }
 
-    private void GenerateList(final Context context,final TabHost tabHost){
-
-        AsyncResponse AS= new AsyncResponse() {
-            @Override
-            public void processFinish(JSONArray output) {
-
-                Log.i("CODE","AsyncResponse");
-
-                List<String> myList = new ArrayList<String>();
-
-                for (int i = 0;i<output.length();i++   ){
-                    try {
-                        JSONObject rowObject = output.getJSONObject(i);
-                        String name = rowObject.getString("Клиент");
-                        myList.add(name);
-
-                    }catch (JSONException e ){e.printStackTrace();}
-                }
 
 
-                MyData.clientsName = myList;
-
-                TabHost.TabSpec tabSpec;
-
-
-                tabSpec = tabHost.newTabSpec("tag1");
-                tabSpec.setIndicator("Tab1");
-                tabSpec.setContent(new Intent(context, Tab1.class));
-                tabHost.addTab(tabSpec);
-
-                tabSpec = tabHost.newTabSpec("tag2");
-                tabSpec.setIndicator("Tab2");
-                tabSpec.setContent(new Intent(context, Tab2.class));
-                tabHost.addTab(tabSpec);
-
-            }
-        };
-
-        try {
-            new AsyncRequest(context, AS).execute("Select [Клиент] from Clients where Type = 'Покупатель'");
-            Log.i("CODE","AsyncTask");
-        }catch (NullPointerException e){e.printStackTrace();}
-
-        Log.i("CODE","Return");
-
-    }
-
-    private void GetNumOfSells(final Context context){
-
-        AsyncResponse AS= new AsyncResponse() {
-            @Override
-            public void processFinish(JSONArray output) {
-
-                Log.i("CODE", "AsyncResponse");
-
-                try {
-
-                    String SUM = output.getJSONObject(0).getString("SUM");
-
-                    Log.i("SUM", SUM);
-
-                    MyData.ifOfNextSell = Integer.valueOf(SUM);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        };
-
-        try {
-            new AsyncRequest(context, AS).execute("SELECT IDENT_CURRENT('Sells') + IDENT_INCR('Sells') as SUM");
-            Log.i("CODE", "AsyncTask");
-        }catch (NullPointerException e){e.printStackTrace();}
-
-        Log.i("CODE","Return");
-
-    }
-
-    private void GetNameOfTraider(final Context context){
-
-        AsyncResponse AS= new AsyncResponse() {
-            @Override
-            public void processFinish(JSONArray output) {
-
-                Log.i("CODE", "AsyncResponse");
-
-                try {
-
-                    String name = output.getJSONObject(0).getString("name");
-
-                    Log.i("NAME", name);
-
-                    MyData.name = name;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        };
-
-        try {
-            new AsyncRequest(context, AS).execute(String.format("select name from imp where login = '%s'",Referense.MSSQL_LOGIN));
-            Log.i("CODE", "AsyncTask");
-        }catch (NullPointerException e){e.printStackTrace();}
-
-        Log.i("CODE","Return");
-
-    }
 
 
     //region OptionMenu

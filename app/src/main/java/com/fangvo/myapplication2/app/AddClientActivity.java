@@ -3,15 +3,11 @@ package com.fangvo.myapplication2.app;
 import android.app.Activity;
 import android.os.Bundle;
 
-public class Tab2 extends Activity {
+public class AddClientActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new PrefsFragment()).commit();
+        setContentView(R.layout.activity_add_client);
     }
-
 }

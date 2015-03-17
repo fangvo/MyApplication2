@@ -17,4 +17,6 @@ public class MyData {
 
     public static String name;
 
+    public static Boolean isLoaded = false;
+
 }
