@@ -194,7 +194,6 @@ public class AddSellActivity extends Activity {
 
         finish();
 
-
     }
 
 }

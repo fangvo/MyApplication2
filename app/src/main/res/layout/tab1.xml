@@ -44,7 +44,7 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="New Button"
+            android:text="Добавить клиента"
             android:id="@+id/button7"
             android:layout_weight="1"/>
     </LinearLayout>

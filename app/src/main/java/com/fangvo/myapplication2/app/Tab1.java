@@ -39,6 +39,9 @@ public class Tab1 extends Activity {
         Button btn2 = (Button)findViewById(R.id.button2);
         btn2.setOnClickListener(onClickListener);
 
+        Button btn7 = (Button) findViewById(R.id.button7);
+        btn7.setOnClickListener(onClickListener);
+
 
 
 
@@ -72,6 +75,11 @@ public class Tab1 extends Activity {
                     }
                     Intent activity_add_sell = new Intent(Tab1.this,AddSellActivity.class);
                     startActivity(activity_add_sell);
+                    break;
+
+                case R.id.button7:
+                    Intent activity_add_client = new Intent(Tab1.this,AddClientActivity.class);
+                    startActivity(activity_add_client);
                     break;
 /*
                 case R.id.button3:
