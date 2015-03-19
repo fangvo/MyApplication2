@@ -1,9 +1,9 @@
-package com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter;
+package com.fangvo.myapplication2.app.com.fangvo.myapplication.app.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
 
-public interface PriceListItemInterface {
+public interface ListItemInterface {
     public int getViewType();
     public View getView(LayoutInflater inflater, View convertView);
 }

@@ -16,7 +16,7 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="ПраисЛист"
+            android:text="Праис Лист"
             android:id="@+id/button"
             android:layout_weight="1"/>
 
@@ -37,7 +37,7 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="New Button"
+            android:text="Список заказов"
             android:id="@+id/button3"
             android:layout_weight="1"/>
 

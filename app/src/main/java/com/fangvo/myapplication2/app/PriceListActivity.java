@@ -3,7 +3,7 @@ package com.fangvo.myapplication2.app;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
-import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.*;
+import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.adapter.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +24,7 @@ public class PriceListActivity extends ListActivity {
 
         JSONObject result = MyData.priceList;
 
-        List<PriceListItemInterface> items = new ArrayList<PriceListItemInterface>();
+        List<ListItemInterface> items = new ArrayList<ListItemInterface>();
 
 
         Iterator JSONObjectIterator = result.keys();
@@ -41,7 +41,7 @@ public class PriceListActivity extends ListActivity {
             }catch (JSONException e ){Log.e("JSONException", e.getMessage());}
         }
 
-        PriceListAdapter adapter = new PriceListAdapter(this, items);
+        ListAdapter adapter = new ListAdapter(this, items);
         setListAdapter(adapter);
 
     }

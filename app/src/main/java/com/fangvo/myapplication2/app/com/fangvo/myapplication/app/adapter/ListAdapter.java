@@ -1,4 +1,4 @@
-package com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter;
+package com.fangvo.myapplication2.app.com.fangvo.myapplication.app.adapter;
 
 
 import android.content.Context;
@@ -9,14 +9,14 @@ import android.widget.ArrayAdapter;
 
 import java.util.List;
 
-public class PriceListAdapter extends ArrayAdapter<PriceListItemInterface> {
+public class ListAdapter extends ArrayAdapter<ListItemInterface> {
     private LayoutInflater mInflater;
 
     public enum RowType {
         LIST_ITEM, HEADER_ITEM
     }
 
-    public PriceListAdapter(Context context, List<PriceListItemInterface> items) {
+    public ListAdapter(Context context, List<ListItemInterface> items) {
         super(context, 0, items);
         mInflater = LayoutInflater.from(context);
     }

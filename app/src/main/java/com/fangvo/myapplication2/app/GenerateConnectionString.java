@@ -9,8 +9,11 @@ public class GenerateConnectionString {
 
         PrefsRef pr = new PrefsRef(context);
 
-        Referense.MSSQL_DB = "jdbc:jtds:sqlserver://" + pr.MSSQL_URL + ";"+"DatabaseName=" +  pr.MSSQL_DB + ";";;
+        Referense.MSSQL_DB = "jdbc:jtds:sqlserver://" + pr.MSSQL_URL+";";
         //"jdbc:jtds:sqlserver://192.168.56.1:1433;instance=SQLEXPRESS;DatabaseName=MyDB";
+        if (!pr.MSSQL_DB.equals("")){
+            Referense.MSSQL_DB += "DatabaseName =" +  pr.MSSQL_DB + ";";
+        }
         if (!pr.MSSQL_Instance.equals("")){
             Referense.MSSQL_DB += "instance=" + pr.MSSQL_Instance + ";";
         }

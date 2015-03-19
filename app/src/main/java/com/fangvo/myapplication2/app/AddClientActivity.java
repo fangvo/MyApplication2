@@ -98,6 +98,8 @@ public class AddClientActivity extends Activity {
         dict.put(10, dir);
         list.add(dict);
 
+        MyData.clientsName.add(cname);
+
         new AsyncUpdate(list,getApplicationContext()).execute("INSERT into Clients values(?,?,?,?,?,?,?,?,?,?)");
         finish();
 

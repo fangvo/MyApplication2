@@ -1,11 +1,11 @@
-package com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter;
+package com.fangvo.myapplication2.app.com.fangvo.myapplication.app.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import com.fangvo.myapplication2.app.R;
 
-public class PriceListItem implements PriceListItemInterface {
+public class PriceListItem implements ListItemInterface {
     public String name;
     public Double chena;
     public Long kolvo;
@@ -18,7 +18,7 @@ public class PriceListItem implements PriceListItemInterface {
 
     @Override
     public int getViewType() {
-        return PriceListAdapter.RowType.LIST_ITEM.ordinal();
+        return ListAdapter.RowType.LIST_ITEM.ordinal();
     }
 
     @Override

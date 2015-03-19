@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class MainActivity extends TabActivity {
 
-
+    static TabHost tabHost;
 
     //private FragmentTabHost mTabHost;
 
@@ -41,13 +41,12 @@ public class MainActivity extends TabActivity {
         try {
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
         }catch (ClassNotFoundException e){e.printStackTrace();}
-        TabHost tabHost = getTabHost();
+        tabHost = getTabHost();
 
         TabHost.TabSpec tabSpec;
 
-
         tabSpec = tabHost.newTabSpec("tag1");
-        tabSpec.setIndicator("Tab1");
+        tabSpec.setIndicator("Меню");
         tabSpec.setContent(new Intent(MainActivity.this, Tab1.class));
         tabHost.addTab(tabSpec);
 
@@ -56,39 +55,19 @@ public class MainActivity extends TabActivity {
         tabSpec.setContent(new Intent(MainActivity.this, Tab2.class));
         tabHost.addTab(tabSpec);
 
-        if(pr.MSSQL_URL.equals("")||pr.MSSQL_DB.equals("")||pr.MSSQL_Login.equals("")||pr.MSSQL_Password.equals("")){
+        if(pr.MSSQL_URL.equals("")||pr.MSSQL_Login.equals("")||pr.MSSQL_Password.equals("")){
             tabHost.setCurrentTab(1);
+            Toast toast = Toast.makeText(this, "Please specify SQL URl,Login and password", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.TOP, 25, 400);
+            toast.show();
         }
 
     }
 
+    public static void SwitchTab(Integer id){
 
+        tabHost.setCurrentTab(id);
 
-
-
-    //region OptionMenu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-    //endregion
-
 
 }

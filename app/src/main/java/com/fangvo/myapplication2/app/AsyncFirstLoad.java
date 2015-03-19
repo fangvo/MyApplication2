@@ -21,6 +21,8 @@ public class AsyncFirstLoad extends AsyncTask<String, Void, List<JSONArray>> {
     private Context mContext;
     private ProgressDialog dialog;
 
+    private Exception exception;
+
     public AsyncFirstLoad(Context context) {
         mContext = context;
     }
@@ -68,11 +70,10 @@ public class AsyncFirstLoad extends AsyncTask<String, Void, List<JSONArray>> {
 
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } finally {
+        } catch (Exception e) {
+            exception = e;
+            cancel(true);
+        }finally {
             try {
                 if (rs != null) rs.close();
                 if (st != null) st.close();
@@ -90,49 +91,65 @@ public class AsyncFirstLoad extends AsyncTask<String, Void, List<JSONArray>> {
 
     protected void onCancelled() {
         dialog.dismiss();
-        Toast toast = Toast.makeText(mContext, "Error connecting to Server", Toast.LENGTH_LONG);
+
+        String er_text = "SQL Error";
+
+        if (exception.getMessage().contains("Please specify a user name")){
+            er_text = "Please specify a user name";
+        }
+
+        if (exception.getMessage().contains("The syntax of the connection URL")){
+            er_text = "Please specify a SQL URL";
+        }
+
+        if (exception.getMessage().contains("Ошибка входа пользователя")){
+            er_text = "Please check user login and password";
+        }
+
+
+        Toast toast = Toast.makeText(mContext, er_text, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.TOP, 25, 400);
         toast.show();
+        exception.printStackTrace();
     }
 
     @Override
     protected void onPostExecute(List<JSONArray> result) {
 
-        SetPriceList(result.get(0));
-        SetClientNameList(result.get(1));
-
-        try {
-            String SUM = result.get(2).getJSONObject(0).getString("SUM");
-
-            Log.i("SUM", SUM);
-
-            MyData.ifOfNextSell = Integer.valueOf(SUM);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (exception != null) {
+            //exception.printStackTrace();
+            throw new RuntimeException(exception);
         }
 
         try {
+            SetPriceList(result.get(0));
+            SetClientNameList(result.get(1));
+
+            String SUM = result.get(2).getJSONObject(0).getString("SUM");
+            Log.i("SUM", SUM);
+            MyData.ifOfNextSell = Integer.valueOf(SUM);
 
             String name = result.get(3).getJSONObject(0).getString("name");
-
             Log.i("NAME", name);
-
             MyData.name = name;
-        } catch (JSONException e) {
+
+            MyData.isLoaded = true;
+
+        }catch (Exception e){
             e.printStackTrace();
         }
 
-        MyData.isLoaded = true;
-
         dialog.dismiss();
+
     }
 
     private void SetPriceList(JSONArray output){
+
         JSONObject result = new JSONObject();
 
-        Map<String,GoodsData> map = new HashMap<String, GoodsData>();
+        Map<String, GoodsData> map = new HashMap<String, GoodsData>();
 
-        for (int i = 0;i<output.length();i++   ){
+        for (int i = 0; i < output.length(); i++) {
             try {
                 JSONObject rowObject = output.getJSONObject(i);
                 JSONArray tempArray;
@@ -140,10 +157,10 @@ public class AsyncFirstLoad extends AsyncTask<String, Void, List<JSONArray>> {
 
                 String temp = rowObject.getString("name");
                 String[] separated = temp.split(" ");
-                String proiz = separated[separated.length-1];
-                String name ="";
-                for (int j=0;j<separated.length-1;j++){
-                    name += separated[j]+" ";
+                String proiz = separated[separated.length - 1];
+                String name = "";
+                for (int j = 0; j < separated.length - 1; j++) {
+                    name += separated[j] + " ";
                 }
                 Double chena = rowObject.getDouble("chena");
                 Long kolvo = rowObject.getLong("kolvo");
@@ -151,20 +168,22 @@ public class AsyncFirstLoad extends AsyncTask<String, Void, List<JSONArray>> {
                 try {
                     tempArray = result.getJSONArray(proiz);
 
-                }catch (JSONException e){
+                } catch (JSONException e) {
 
                     Log.v("JSONException", e.getMessage());
                     tempArray = new JSONArray();
                 }
 
-                map.put(temp,new GoodsData(chena,kolvo));
-                tempObject.put("chena",chena);
-                tempObject.put("kolvo",kolvo);
-                tempObject.put("name",name.trim());
+                map.put(temp, new GoodsData(chena, kolvo));
+                tempObject.put("chena", chena);
+                tempObject.put("kolvo", kolvo);
+                tempObject.put("name", name.trim());
                 tempArray.put(tempObject);
-                result.put(proiz,tempArray);
+                result.put(proiz, tempArray);
 
-            }catch (JSONException e ){e.printStackTrace();}
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         MyData.priceList = result;

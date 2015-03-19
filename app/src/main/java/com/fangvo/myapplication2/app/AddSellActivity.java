@@ -1,24 +1,23 @@
 package com.fangvo.myapplication2.app;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
-import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListAdapter;
-import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListItem;
-import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter.PriceListItemInterface;
+import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.adapter.ListAdapter;
+import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.adapter.PriceListItem;
+import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.adapter.ListItemInterface;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class AddSellActivity extends Activity {
 
-    List<PriceListItemInterface> mItems;
+    List<ListItemInterface> mItems;
     ListView mListView;
-    PriceListAdapter adapter_listview;
+    ListAdapter adapter_listview;
     Spinner mSinner;
     Spinner mCSinner;
     Map<String,GoodsData> mData = new HashMap<String, GoodsData>();
@@ -29,7 +28,7 @@ public class AddSellActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_sell);
 
-        mItems = new ArrayList<PriceListItemInterface>();
+        mItems = new ArrayList<ListItemInterface>();
 
         List<String> clientList = MyData.clientsName;
         for(String name :clientList){
@@ -69,7 +68,7 @@ public class AddSellActivity extends Activity {
 
 
 
-        adapter_listview = new PriceListAdapter(this, mItems);
+        adapter_listview = new ListAdapter(this, mItems);
         mListView.setAdapter(adapter_listview);
 
         ArrayAdapter<String> adapter_clients = new ArrayAdapter<String>(AddSellActivity.this, android.R.layout.simple_spinner_item, clientList);
@@ -148,7 +147,7 @@ public class AddSellActivity extends Activity {
         List<Map<Integer,Object>> list2  = new ArrayList<Map<Integer,Object>>();
         List<Map<Integer,Object>> list3  = new ArrayList<Map<Integer,Object>>();
 
-        SimpleDateFormat df = new SimpleDateFormat("dd.M.yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("dd.M.yyyy HH:mm");
         Date date = new Date();
         String dateStr = df.format(date.getTime());
         Log.i("TIME", dateStr);

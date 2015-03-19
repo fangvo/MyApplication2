@@ -1,11 +1,11 @@
-package com.fangvo.myapplication2.app.com.fangvo.myapplication.app.pricelistadapter;
+package com.fangvo.myapplication2.app.com.fangvo.myapplication.app.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import com.fangvo.myapplication2.app.R;
 
-public class PriceListHeader implements PriceListItemInterface {
+public class PriceListHeader implements ListItemInterface {
     private final String         name;
 
     public PriceListHeader(String name) {
@@ -14,7 +14,7 @@ public class PriceListHeader implements PriceListItemInterface {
 
     @Override
     public int getViewType() {
-        return PriceListAdapter.RowType.HEADER_ITEM.ordinal();
+        return ListAdapter.RowType.HEADER_ITEM.ordinal();
     }
 
     @Override
