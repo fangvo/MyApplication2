@@ -3,6 +3,7 @@ package com.fangvo.myapplication2.app;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import com.fangvo.myapplication2.app.com.fangvo.myapplication.app.adapter.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +45,10 @@ public class PriceListActivity extends ListActivity {
         ListAdapter adapter = new ListAdapter(this, items);
         setListAdapter(adapter);
 
+    }
+
+    public void onClick(View view) {
+        finish();
     }
 
 

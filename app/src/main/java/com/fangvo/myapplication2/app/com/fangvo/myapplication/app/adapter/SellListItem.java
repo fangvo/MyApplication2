@@ -9,11 +9,13 @@ public class SellListItem implements ListItemInterface {
     public String name;
     public String date;
     public Double sum;
+    public  Integer ID;
 
-    public SellListItem(String text1, String text2, Double text3) {
+    public SellListItem(Integer text4,String text1, String text2, Double text3) {
         this.name = text1;
         this.date = text2;
         this.sum = text3;
+        this.ID = text4;
     }
 
     @Override
