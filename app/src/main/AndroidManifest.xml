@@ -40,6 +40,10 @@
             android:name="com.fangvo.myapplication2.app.SellListActivity"
             android:label="SellListActivity">
         </activity>
+        <activity
+            android:name="com.fangvo.myapplication2.app.SellListInfoActivity"
+            android:label="SellListInfoActivity">
+        </activity>
     </application>
 
 </manifest>
