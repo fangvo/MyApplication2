@@ -38,7 +38,7 @@ public class SellListInfoActivity extends ListActivity {
         text1.setText("Заказ №" + ID);
 
 
-        Toast.makeText(getApplicationContext(),"ID = "+ID,Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(),"ID = "+ID,Toast.LENGTH_SHORT).show();
         String query = String.format("select name ,ed , chena from SellInfo as si left join Sells as s on si.idofsell = s.ID where s.ID = %s",ID);
 
         Log.i("QUERY",query);
