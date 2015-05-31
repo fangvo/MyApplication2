@@ -17,7 +17,7 @@ import java.util.Map;
 public class AddClientActivity extends Activity {
 
 
-	// иничиализация активности
+	// инициализация активности
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
