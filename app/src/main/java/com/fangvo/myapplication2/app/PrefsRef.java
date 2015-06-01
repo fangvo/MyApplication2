@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+//хранение логина пророля... взятых из настроек 
+
 public class PrefsRef {
 
     public String MSSQL_URL ;

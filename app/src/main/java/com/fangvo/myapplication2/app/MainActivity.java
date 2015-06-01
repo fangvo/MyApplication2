@@ -38,11 +38,13 @@ public class MainActivity extends TabActivity {
 
 
 
+		// провека дрвйвера дб
         try {
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
         }catch (ClassNotFoundException e){e.printStackTrace();}
         tabHost = getTabHost();
 
+		// создание таб хоста и дабовление в него табов
         TabHost.TabSpec tabSpec;
 
         tabSpec = tabHost.newTabSpec("tag1");
@@ -55,6 +57,8 @@ public class MainActivity extends TabActivity {
         tabSpec.setContent(new Intent(MainActivity.this, Tab2.class));
         tabHost.addTab(tabSpec);
 
+		
+		// переключение на настройки если в настройках нету логина и пароля и сылки на дб
         if(pr.MSSQL_URL.equals("")||pr.MSSQL_Login.equals("")||pr.MSSQL_Password.equals("")){
             tabHost.setCurrentTab(1);
             Toast toast = Toast.makeText(this, "Please specify SQL URl,Login and password", Toast.LENGTH_LONG);
@@ -64,6 +68,8 @@ public class MainActivity extends TabActivity {
 
     }
 
+	
+	//переключение таба доступно отовсюду
     public static void SwitchTab(Integer id){
 
         tabHost.setCurrentTab(id);

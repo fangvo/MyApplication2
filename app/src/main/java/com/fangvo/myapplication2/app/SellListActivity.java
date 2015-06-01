@@ -40,10 +40,12 @@ public class SellListActivity extends ListActivity implements AdapterView.OnItem
         //getListView().setOnItemLongClickListener(this);
         getListView().setOnItemClickListener(this);
 
+		// запрос списка закозов
         String query = String.format("select  ID,ClientName as name, day, SUM as sum from Sells where [Кем] = '%s' ORDER BY day DESC ", MyData.name);
         new AsyncGetSellList(this).execute(query);
     }
-
+	
+	// обработчик нажатий
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View v) {
@@ -56,19 +58,17 @@ public class SellListActivity extends ListActivity implements AdapterView.OnItem
         }
     };
 
+	/* // обработчик долгих нажатий по элементу списка
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         SellListItem selectedItem = (SellListItem)parent.getItemAtPosition(position);
 
 
         deleteDialog(SellListActivity.this,selectedItem);
-        /*mAdapter.remove(selectedItem);
-        mAdapter.notifyDataSetChanged();*/
-
-        //Toast.makeText(getApplicationContext(),selectedItem.name,Toast.LENGTH_SHORT).show();
         return true;
-    }
+    } */
 
+	// обработчик нажатий по элементу списка
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         SellListItem selectedItem = (SellListItem)parent.getItemAtPosition(position);
@@ -81,6 +81,7 @@ public class SellListActivity extends ListActivity implements AdapterView.OnItem
     }
 
 
+	// асинхроное получение списка заказов
     public class AsyncGetSellList extends AsyncTask<String, Void, JSONArray> {
 
         private Context mContext;
@@ -150,6 +151,9 @@ public class SellListActivity extends ListActivity implements AdapterView.OnItem
         @Override
         protected void onPostExecute(JSONArray result) {
 
+		// обработка JSON и присаоение листа адаптеру
+		
+		
             List<ListItemInterface> items = new ArrayList<ListItemInterface>();
 
 
@@ -168,14 +172,15 @@ public class SellListActivity extends ListActivity implements AdapterView.OnItem
         }
     }
 
-    public void deleteDialog(Context context, final SellListItem item) {
+	
+	
+    /* // удаление элемента списка
+	public void deleteDialog(Context context, final SellListItem item) {
         AlertDialog.Builder confirmDelete = new AlertDialog.Builder(context);
         confirmDelete.setMessage("Are You Sure You Want to Delete")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-                        //Just add these two lines and you should be good.
 
                         mAdapter.remove(item);
                         mAdapter.notifyDataSetChanged();
@@ -192,5 +197,5 @@ public class SellListActivity extends ListActivity implements AdapterView.OnItem
 
         dialog.show();
 
-    }
+    } */
 }

@@ -45,6 +45,7 @@ public class AsyncFirstLoad extends AsyncTask<String, Void, List<JSONArray>> {
 
         List<JSONArray> lJArray = new ArrayList<JSONArray>();
         try {
+			// подключение к базе
             con = DriverManager.getConnection(Referense.MSSQL_DB, Referense.MSSQL_LOGIN, Referense.MSSQL_PASS);
             Log.i("Connection", " open");
             if (con != null) {
@@ -82,16 +83,14 @@ public class AsyncFirstLoad extends AsyncTask<String, Void, List<JSONArray>> {
                 throw new RuntimeException(e.getMessage());
             }
         }
-        /*} catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }*/
-        //Log.i("JSON ADD",resultSet.toString());
         return lJArray;
     }
 
     protected void onCancelled() {
         dialog.dismiss();
 
+		// вывод сообщения об ошибке
+		
         String er_text = "SQL Error";
 
         if (exception.getMessage().contains("Please specify a user name")){
@@ -122,15 +121,17 @@ public class AsyncFirstLoad extends AsyncTask<String, Void, List<JSONArray>> {
         }
 
         try {
+			//сохоанение даных
             SetPriceList(result.get(0));
             SetClientNameList(result.get(1));
 
+			// получение № последнего заказа из полученых даных
             String SUM = result.get(2).getJSONObject(0).getString("SUM");
             Log.i("SUM", SUM);
             MyData.ifOfNextSell = Integer.valueOf(SUM);
-
+			// получение имени вошедшего
             String name = result.get(3).getJSONObject(0).getString("name");
-            Log.i("NAME", name);
+            // Log.i("NAME", name);
             MyData.name = name;
 
             MyData.isLoaded = true;
@@ -142,7 +143,7 @@ public class AsyncFirstLoad extends AsyncTask<String, Void, List<JSONArray>> {
         dialog.dismiss();
 
     }
-
+	// разборка JSONArray на части и создание из них праислиста  и обновление локальных даных
     private void SetPriceList(JSONArray output){
 
         JSONObject result = new JSONObject();

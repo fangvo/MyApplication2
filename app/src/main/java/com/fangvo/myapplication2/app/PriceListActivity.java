@@ -27,7 +27,7 @@ public class PriceListActivity extends ListActivity {
 
         List<ListItemInterface> items = new ArrayList<ListItemInterface>();
 
-
+		// перебор JSON для создания списка
         Iterator JSONObjectIterator = result.keys();
         while(JSONObjectIterator.hasNext()){
             String key = (String)JSONObjectIterator.next();
@@ -41,7 +41,7 @@ public class PriceListActivity extends ListActivity {
                 }
             }catch (JSONException e ){Log.e("JSONException", e.getMessage());}
         }
-
+		// создание адапера и присоение ему списка
         ListAdapter adapter = new ListAdapter(this, items);
         setListAdapter(adapter);
 

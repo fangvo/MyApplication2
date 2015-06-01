@@ -3,6 +3,8 @@ package com.fangvo.myapplication2.app;
 import android.content.Context;
 import android.util.Log;
 
+// создание строки подключенй для дб из настроек
+
 public class GenerateConnectionString {
 
     GenerateConnectionString(Context context){
@@ -21,9 +23,9 @@ public class GenerateConnectionString {
         Referense.MSSQL_LOGIN = pr.MSSQL_Login;
         Referense.MSSQL_PASS = pr.MSSQL_Password;
 
-        Log.i("CONNECTION STRING", Referense.MSSQL_DB);
+        /* Log.i("CONNECTION STRING", Referense.MSSQL_DB);
         Log.i("CONNECTION STRING", Referense.MSSQL_LOGIN);
-        Log.i("CONNECTION STRING", Referense.MSSQL_PASS);
+        Log.i("CONNECTION STRING", Referense.MSSQL_PASS); */
     }
 
 }

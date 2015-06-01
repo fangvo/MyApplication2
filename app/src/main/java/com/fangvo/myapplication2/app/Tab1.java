@@ -45,6 +45,8 @@ public class Tab1 extends Activity {
 
     //region SomeComents
 
+	// обработчик кнопок
+	
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View v) {
@@ -95,6 +97,7 @@ public class Tab1 extends Activity {
 
         PrefsRef pr = new PrefsRef(this);
 
+		// загрузка даных если они еще не загружены
         if (!MyData.isLoaded){
             Log.i("LOAD","LOAD FROM TAB1");
             new GenerateConnectionString(this);

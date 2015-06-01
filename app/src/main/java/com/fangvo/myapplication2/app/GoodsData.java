@@ -1,5 +1,7 @@
 package com.fangvo.myapplication2.app;
 
+// класс для хранения даных
+
 public class GoodsData {
 
         public Double chena;

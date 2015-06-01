@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+//асинхроное обнавление даных в дб
+
 public class AsyncUpdate extends AsyncTask<String, Void, Void> {
 
     private List<Map<Integer,Object>> mData;

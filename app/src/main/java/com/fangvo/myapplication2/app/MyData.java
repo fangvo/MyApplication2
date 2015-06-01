@@ -5,6 +5,8 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.Map;
 
+// клас для хранения даных
+
 public class MyData {
 
     public static Map<String,GoodsData> data;// = new HashMap<String, GoodsData>();
